@@ -1,0 +1,379 @@
+/*added on 13/March/2018 - Rizwan*/
+.THIS#topDiv{
+    cursor: pointer;
+    background-color: #fff;
+    padding: 30px 0px 10px 0px;
+    border-radius: 4px;
+}
+/*added on 13/March/2018 - Rizwan*/
+.THIS #lastProgressButton{
+    background-color: rgb(255, 255, 255);
+    border-color: rgb(21, 137, 238);
+    box-shadow: rgb(21, 137, 238) 0 0 0 0px;
+}
+/*added on 15/March/2018 - Rizwan*/
+.THIS .buttonWidth{
+    min-width:11rem;
+    width:170px;
+}
+
+.THIS .slds-scrollable--y::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+.THIS.h2 {
+    font-size: 20px;
+}
+.THIS .activebackground {
+    background-color: rgb(6, 28, 63);
+    border-color: rgb(6, 28, 63);
+}
+.THIS .checboxclass{
+    disabled:true;
+}
+.THIS .myCheckbox{
+    display: inline-block;
+    float: left;
+}
+.THIS .hightliteText:hover{
+    background-color: rgb(224, 229, 238); color: black;
+    font-size:small;
+}
+
+.THIS .webkit-scrollbar {
+  width: 2px;
+  height: 2px;
+}
+.THIS .webkit-scrollbar-button {
+  width: 0px;
+  height: 0px;
+}
+.THIS .webkit-scrollbar-thumb {
+  background: #e1e1e1;
+  border: 0px none #ffffff;
+  border-radius: 50px;
+}
+.THIS .webkit-scrollbar-thumb:hover {
+  background: #ffffff;
+}
+.THIS .webkit-scrollbar-thumb:active {
+  background: #000000;
+}
+.THIS .webkit-scrollbar-track {
+  background: #666666;
+  border: 0px none #ffffff;
+  border-radius: 50px;
+}
+.THIS .webkit-scrollbar-track:hover {
+  background: #666666;
+}
+.THIS .webkit-scrollbar-track:active {
+  background: #333333;
+}
+.THIS .webkit-scrollbar-corner {
+  background: transparent;
+}
+
+.THIS .Overlay{
+ 
+ -webkit-filter: blur(0.5px);
+  -moz-filter: blur(0.5px);
+  -o-filter: blur(0.5px);
+  -ms-filter: blur(0.5px);
+    filter: blur(0.2px);
+    width: 100%;
+    height: 100%;
+    opacity: 1;
+    visibility: visible;
+    position: relative;
+    pointer-events: none;
+    
+    
+    background-color:rgba(0,0,0,0.4);
+   
+     /*opacity: 1;
+   
+    transition: opacity .2s ease,visibility 0s;
+   
+    transition-delay: 0s,.3s;*/
+
+
+}
+.THIS .cPANW_customLookup{
+    margin-bottom: 1rem;
+}
+.THIS .slds-m-top_large{
+    margin-top: .7rem;
+}
+
+.THIS .slds-modal__container{
+    padding:0px;
+}
+.THIS .datePicker-openIcon{
+    margin-bottom: 1rem;
+}
+.THIS  .slds-m-top--large {
+    margin-top: .7rem;
+}
+
+.THIS.flashing {
+    animation-name: flashHeader;
+    animation-duration: 5s;
+    animation-direction: alternate;
+    animation-iteration-count: infinite;
+}
+
+
+.THIS.slds-tree-container, .THIS.slds-tree_container {
+    min-width: 7.5rem;
+    max-width: 30rem; 
+}
+.THIS .ltgcard {
+    margin-left: 0.3rem;
+    margin-right: 0.3rem;
+    margin-top: 0.5rem !important;  
+}
+.THIS .slds-modal__footer {
+    border-top: 2px solid rgb(216, 221, 230);
+    border-bottom-right-radius: .25rem;
+    border-bottom-left-radius: .25rem;
+    padding: .75rem 1rem;
+    background-color: rgb(244, 246, 249);
+    text-align: right;
+    box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.16);
+}
+.THIS .slds-modal__header {
+    position: relative;
+    border-top-right-radius: .25rem;
+    border-top-left-radius: .25rem;
+    border-bottom: 2px solid rgb(216, 221, 230);
+    padding: 1rem;
+    text-align: center;
+}
+@keyframes flashHeader {
+    0%   {background-color: black; color: white;}
+    25%  {background-color: white; color: black;}
+    50%  {background-color: black; color: white;}
+    75%  {background-color: white; color: black;}
+    100% {background-color: black; color: white;}
+}
+.THIS .hide-box{
+    display:none;
+}
+
+.THIS  .checkbox {
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+}
+.THIS  .checkbox > input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    z-index: -1;
+}
+
+.THIS  .checkedbox__icon {
+    display: inline-block;
+    content: "\e600";
+    color: #999;
+    
+}
+.THIS  input[type="checkbox"]:checked ~ .checkbox__icon {
+    color: #2A7DEA;
+    content: "\e601";
+}
+
+.THIS  .checkbox input[type="checkbox"] {
+    position: static;
+}
+.THIS.checkedbox__icon:before {
+    font-family: "icons";
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    content: "\e600";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+.THIS .slds-card::-webkit-scrollbar {
+    width: 1em !important;
+}
+ 
+.THIS .slds-card::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px red;
+}
+ 
+.THIS .slds-card::-webkit-scrollbar-thumb {
+  background-color: darkgrey;
+  outline: 1px solid slategrey;
+}
+
+.THIS  input[type="checkbox"] .checkedbox__icon {
+    color: #2A7DEA;
+    content: "\e600 !important";
+}
+
+.THIS  .icon--check:before {
+    content: "\e600";
+}
+.THIS input[type="checkbox"]:checked{
+    content: "\e600";
+}
+.THIS .checkedbox__icon:before{
+    content: "\e600";
+}
+
+.THIS  .icon--check-empty:before{
+    content: "\e600";
+}
+
+.THIS  .checkedbox__icon:before {
+    content: "\e600";
+}
+
+.THIS  .checkbox__icon:before {
+    font-family: "icons";
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    content: "\e601";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.THIS  .icon--check:before {
+    content: "\e601";
+}
+.THIS input[type="checkbox"]:checked{
+    content: "\e601";
+}
+.THIS .checkbox__icon:before{
+    content: "\e601";
+}
+
+.THIS  .icon--check-empty:before{
+    content: "\e601";
+}
+
+.THIS  .checkbox__icon:before {
+    content: "\e601";
+}
+@font-face {
+    font-family: "icons";
+    font-weight: normal;
+    font-style: normal;
+    src: url("data:application/x-font-woff;charset=utf-8;base64,d09GRk9UVE8AAAR4AAoAAAAABDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABDRkYgAAAA9AAAAPgAAAD4fZUAVE9TLzIAAAHsAAAAYAAAAGAIIvy3Y21hcAAAAkwAAABMAAAATBpVzFhnYXNwAAACmAAAAAgAAAAIAAAAEGhlYWQAAAKgAAAANgAAADYAeswzaGhlYQAAAtgAAAAkAAAAJAPiAedobXR4AAAC/AAAABgAAAAYBQAAAG1heHAAAAMUAAAABgAAAAYABlAAbmFtZQAAAxwAAAE5AAABOUQYtNZwb3N0AAAEWAAAACAAAAAgAAMAAAEABAQAAQEBCGljb21vb24AAQIAAQA6+BwC+BsD+BgEHgoAGVP/i4seCgAZU/+LiwwHi2v4lPh0BR0AAAB8Dx0AAACBER0AAAAJHQAAAO8SAAcBAQgPERMWGyBpY29tb29uaWNvbW9vbnUwdTF1MjB1RTYwMHVFNjAxAAACAYkABAAGAQEEBwoNL2X8lA78lA78lA77lA6L+HQVi/yU+JSLi/iU/JSLBd83Fffsi4v77Pvsi4v37AUOi/h0FYv8lPiUi4v33zc3i/s3++yLi/fs9zeL398F9wCFFftN+05JzUdI9xr7GveR95FHzwUO+JQU+JQViwwKAAMCAAGQAAUAAAFMAWYAAABHAUwBZgAAAPUAGQCEAAAAAAAAAAAAAAAAAAAAARAAAAAAAAAAAAAAAAAAAAAAQAAA5gEB4P/g/+AB4AAgAAAAAQAAAAAAAAAAAAAAIAAAAAAAAgAAAAMAAAAUAAMAAQAAABQABAA4AAAACgAIAAIAAgABACDmAf/9//8AAAAAACDmAP/9//8AAf/jGgQAAwABAAAAAAAAAAAAAAABAAH//wAPAAEAAAAAAACkYCfgXw889QALAgAAAAAAz65FuwAAAADPrkW7AAD/4AIAAeAAAAAIAAIAAAAAAAAAAQAAAeD/4AAAAgAAAAAAAgAAAQAAAAAAAAAAAAAAAAAAAAYAAAAAAAAAAAAAAAABAAAAAgAAAAIAAAAAAFAAAAYAAAAAAA4ArgABAAAAAAABAA4AAAABAAAAAAACAA4ARwABAAAAAAADAA4AJAABAAAAAAAEAA4AVQABAAAAAAAFABYADgABAAAAAAAGAAcAMgABAAAAAAAKACgAYwADAAEECQABAA4AAAADAAEECQACAA4ARwADAAEECQADAA4AJAADAAEECQAEAA4AVQADAAEECQAFABYADgADAAEECQAGAA4AOQADAAEECQAKACgAYwBpAGMAbwBtAG8AbwBuAFYAZQByAHMAaQBvAG4AIAAxAC4AMABpAGMAbwBtAG8AbwBuaWNvbW9vbgBpAGMAbwBtAG8AbwBuAFIAZQBnAHUAbABhAHIAaQBjAG8AbQBvAG8AbgBHAGUAbgBlAHIAYQB0AGUAZAAgAGIAeQAgAEkAYwBvAE0AbwBvAG4AAAAAAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==") format("woff");
+}
+
+
+
+
+.THIS  .list-type2{
+    width: 380px;
+    margin: 0 auto;
+    margin-left: 3em;
+}
+
+.THIS  .list-type2 ol{
+    counter-reset: li;
+    list-style: none;
+    *list-style: decimal;
+    font-size: 10px;
+    font-family: 'Raleway', sans-serif;
+    padding: 0;
+    margin-bottom: 4em;
+}
+
+.THIS  .list-type2 ol ol{
+    margin: 0 0 0 2em;
+}
+
+.THIS  .list-type2 a{
+    position: relative;
+    display: block;
+    padding: .4em .4em .4em 2em;
+    *padding: .4em;
+    margin: .5em 0;
+    
+    background: rgba(84, 105, 141, 0.95);
+    
+    text-decoration: none;
+    transition: all .2s ease-in-out;
+    color: white;
+}
+.THIS .list-type2 a:hover{
+    background: #d6d4d4;
+    text-decoration:none;
+    transform: scale(1.1);
+    color: #444;
+}
+
+.THIS .list-type2 a:before{
+    content: counter(li);
+    counter-increment: li;
+    position: absolute;
+    left: -1.3em;
+    top: 50%;
+    background: rgba(84, 105, 141, 0.95);
+    height: 2.5em;
+    margin-top: -1.3em;
+    width: 2em;
+    line-height: 2em;
+    border: .3em solid #fff;
+    text-align: center;
+    font-weight: bold;
+    color:#FFF;
+}
+.THIS .cPANW_SalesPath input[type=checkbox]:checked~.checkbox__icon {
+    color: #4bca81;
+}
+.THIS .cPANW_SalesPath input[type=checkbox] {
+    display:none;
+}
+.THIS .cPANW_SalesPath input[type=checkbox]:unchecked~.checkbox__icon {
+    background:#FFF;
+}
+
+.THIS .ft-progress-bar {
+    transition: .6s all ease;
+}
+.THIS .ft-outcomes{
+    background: #f2cf5b !important;     
+}
+.THIS .ft-outcomes+.slds-is-complete:before, 
+.THIS .ft-outcomes+.slds-is-current:before {
+    background: #f2cf5b !important;
+}
+.THIS .slds-progress{
+    overflow : hidden;
+    max-width: 100%;
+    margin-left: 50px;
+    margin-right: 197px;
+}
+.THIS .slds-progress .slds-col{
+    position: relative;
+}
+.THIS .slds-progress .slds-progress-bar{
+    height: 4px;
+}
+.THIS .slds-progress .ft-progress__marker{
+    width: 14px;
+    height: 14px;
+    margin-top: 6px;
+    border-width: 3px;
+}
+.THIS .slds-progress .slds-progress-bar__value{
+    transition: .5s all ease;
+}
+.THIS .flexipageBaseRecordHomeTemplateDesktop{
+    width: 100%;
+    min-width: 0px !important;
+}
+/*fix for Summer'18 release*/
+.THIS #RecoTaskList{min-width:100%;}

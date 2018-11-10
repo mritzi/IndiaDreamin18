@@ -1,0 +1,256 @@
+.THIS{
+    font-family: 'Salesforce Sans', Arial, Sans;
+}
+/* repeated background-color provided to override styling of Salesforce + org-chart */
+.THIS .orgchart{
+    background-color: #fff !important;
+    background-image:none; /* overrides default org-chart gradient styling */
+    width:auto;
+    margin-top:30px !important;
+}
+/*  */
+.THIS#chart-Container{
+   background-color: #fff !important; 
+    overflow: initial !important;
+}
+/* hides arrow icons on nodes coming from org-chart */
+.THIS .edge{display:none;}
+/*  hides org-chart spinner & export button. We are using slds button for export and invoking hidden org-chart button*/
+.THIS div.mask{display:none;}
+/*  */
+.THIS .orgchart .node {
+    position: relative;
+    /*  background-color:#fff; */
+    width:140px;
+}
+/* setting properties for the Header div on the component */
+.THIS#componentDiv{
+    width:100% !important;
+    display:flex;
+    background-color:#F3F2F2;
+    padding:20px 5px 5px 5px;
+    margin-left:-12px;
+    position:fixed;
+    /* z-index of componentDiv should be lower than Export button's z-index*/
+    z-index:99;
+}
+
+/*  "Export" button is part of org-chart. setting fixed position for the export button, so that it stays on top of the header & fixed at the top*/
+.THIS .oc-export-btn{
+    margin-right:85px;
+    padding: 0 1rem 0 1rem;
+    line-height: 1.875rem;
+    position:fixed;
+    z-index:100;
+
+}
+
+/* back button on the header, left side */
+.THIS .backButtonDiv{width:25%;float:left;}
+/* Text at the center of the header */
+.THIS .headerText{text-align:center;width:50%;}
+/* right side buttons on the header */
+.THIS .headerButtons{width:25%;float:right;right:0;}
+/* save button on the header */
+.THIS .saveButtonDiv{float:right;margin-right:12px;}
+/*  overriding default org-chat styling */
+.THIS .node:hover{
+     background-color:transparent !important;
+}
+.THIS .node.focused{
+     background-color:transparent !important;
+}
+/* font sizes to resolve inconsistencies between lightning & org-chart styling */
+.THIS .orgchart{font-size:10px;}
+.THIS h4{font-size:13px;}
+.THIS h5{font-size:10px;}
+.THIS h2{font-size:16px;}
+/* styling for each node */
+.THIS .nodeDiv{
+    padding:3px;
+    text-align: center;
+    background:#ebeef3;
+    border-radius: 4px 4px 4px 4px;
+}
+
+/* create spacing between company name & picklist characters on the node */
+.THIS .emptyDiv{height:15px;}
+
+.THIS #editNode,.THIS #addNode, .THIS #deleteNode{
+    padding:2.5px;
+    font-size:14px;
+    text-align:center;
+}
+.THIS #editNode:hover,.THIS #addNode:hover, .THIS #deleteNode:hover{
+    color:#eee;
+    background-color:#002;
+    padding:2.5px;
+    border-radius: 50%;
+    font-size:14px;
+    text-align:center;
+}
+.THIS .contactTitle{font-weight:bold;}
+.THIS .indicatorsDiv{
+    background-color:#fff;color:#000;margin-top:10px;
+}
+.THIS .indicatorsDiv>div:not(:last-child){
+    border-right:1px solid #eee;;
+}
+/* used to hide values like phone & email */
+.THIS .extraInfo{display:none;}
+/*  */
+.THIS .progressBarDiv{font-size:initial;margin-top:2px;}
+.THIS .progressBarDiv>span{background:#455B8A;}
+.THIS #editNode{position:absolute; top:0px; right: 0px;}
+.THIS #deleteNode{position:absolute; top:0px; left: 0px;}
+/* changing color based on Status value for each node */
+.THIS .attrBlocker{border-bottom: 2px solid #E66641;}
+.THIS .attrUnknown{border-bottom: 2px solid #FFC914;}
+.THIS .attrTalker{border-bottom: 2px solid #76B041;}
+.THIS .attrMobilizer{border-bottom: 2px solid #76B041;}
+/* width of progress bar on node, based on picklist value */
+.THIS .attrLow{width:33.33%;}
+.THIS .attrMedium{width:66.67%;}
+.THIS .attrHigh{width:100%;}
+/* styling of Plus icon, displayed when no old map data exists for any record */
+.THIS#plusDiv{
+    text-align:center;
+    width:100%;
+    margin:0 auto;
+    margin-top:100px;
+    margin-bottom:150px;
+    background-color:#fff;
+    padding:10px 0px;
+    /*display:none;*/
+}
+.THIS#plusDiv>span{
+    cursor:pointer;
+}
+.THIS#plusDiv button{margin-top:10px;}
+/* Hyperlink of Contact's name on hover */
+.THIS .recordLink:hover{cursor:pointer;text-decoration:underline;}
+.THIS #deleteModalHeader{font-weight:bold;color:red;}
+/* adjusting width and alignment of tabs header inside modal */
+.THIS .slds-tabs--default__nav>li{
+    width:50%;
+    text-align:center;
+}
+/* Hide extra long text for contact Name */
+.THIS h4.recordLink{
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+/* By default hide the Legend Div, to show it update properties from JS */
+.THIS#legendDiv{
+    bottom:0;
+    margin-bottom:5px;
+    align:center;
+    width:65%;
+    margin-left:17.5%;
+    position:fixed;
+    background-color:#fff;
+    z-index:9;
+    display:none;
+}
+/* styling the sections of the Legend Div */
+.THIS #innerLegendDiv>div:not(:last-child){
+    padding:5px;border:2px solid #eeeeee;border-right:0;
+}
+.THIS #innerLegendDiv>div:last-child{
+    padding:5px;border:2px solid #eeeeee;
+}
+.THIS .legendRowHeaderDiv{
+    background-color:#eee;text-align:center;
+}
+.THIS .pickListValuesDiv{display:flex;}
+.THIS .pickListChar{width:10%;}
+.THIS .pickListColon{width:5%}
+.THIS .pickListValue{width:85%;overflow:ellipsis;}
+.THIS .progressBarValue{width:85%;overflow:ellipsis;}
+.THIS .legendProgressBarDiv{width:35%;margin-top:7px;}
+.THIS .slds-progress-bar__value{background:#455B8A;}
+.THIS .orgchart .lines .downLine{
+    /*width: 3px;*/
+}
+/* the parent div of the Lenged Div */
+.THIS#toggleDisplayDiv{
+    position:fixed;
+    right:3px;
+    bottom:3px;
+    cursor:pointer;
+    width: 75px;
+    background-color: #3b70d3;
+    color: #fff;
+    padding: 5px;
+    border: none;
+    border-radius: 3px;
+    text-align: center;
+}
+/* fix for distorted lines that connect the nodes */
+.THIS div.downLine{
+    width:2px !important;
+}
+.THIS .multiPickListHeaderDiv{
+    text-align:center;
+    background-color:#eee;
+}
+.THIS #fetchFromAccountModal .slds-size--3-of-12{
+    width:25% !important;
+    border:1px solid #eee !important;
+}
+.THIS #fetchFromAccountModal .slds-size--3-of-12:not(:last-child){
+    border-right:0px;
+}
+.THIS .multiPickListDiv>select{
+    width:100%;
+    overflow:scroll;
+}
+
+.THIS .tooltip {
+    position: relative;
+    display: inline-block;
+
+}
+.THIS .tooltip .tooltiptext {
+    visibility: hidden;
+    width: auto;
+    background-color: #16325c;
+    color: #fff;
+    text-align: center;
+    border-radius: 2px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 100%;
+    margin-left: -45px;
+    opacity: 0;
+    transition: opacity 1s;
+    font-size: 11px;
+    min-width:30px;
+}
+
+.THIS .tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -2px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #16325c transparent transparent transparent;
+}
+
+.THIS .tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+
+.THIS.fa-trash:before {
+    content: "\f1f8";
+}
+
+.THIS .fa-trash:before {
+    content: "\f1f8";
+}

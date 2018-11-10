@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>CustomLookUpController</members>
+		<members>CustomLookUpService</members>
+		<members>SalespathConstants</members>
+		<members>SalesPathController</members>
+		<members>SalesPathService</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>CustomLookupComponent</members>
+		<members>CustomLookupResultComponent</members>
+		<members>SalesPath</members>
+		<members>SalesPathTaskRowComponent</members>
+		<members>SalesPathTaskRowEvent</members>
+		<members>selectedsObjectRecordEvent</members>
+        <name>AuraDefinitionBundle</name>
+    </types>
+    <version>41.0</version>
+</Package>

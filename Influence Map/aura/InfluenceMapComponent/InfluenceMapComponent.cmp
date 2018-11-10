@@ -1,0 +1,326 @@
+<!--
+**** Component : InfluenceMapComponent
+**** Date: 12/Dec/2017
+**** Name/Company : Mohammed Rizwan/Standav
+**** Description : Used to display Influence Map for Account/Contact/Opportunity,
+****               with ability to add/edit/delete/reorder/export map nodes & create new Contact
+-->
+<aura:component controller="InfluenceMapController" implements="flexipage:availableForAllPageTypes,force:hasRecordId,force:appHostable"  access="global">
+    <ltng:require styles="{!join(',',
+                            $Resource.DabengOrgChartCSS_2_0_6 + '/css/font-awesome.min.css',
+                            $Resource.DabengOrgChartCSS_2_0_6 + '/css/jquery.orgchart.min.css',
+                            $Resource.DabengOrgChartCSS_2_0_6 + '/css/style.css')}"
+                    scripts="{!join(',',
+                        $Resource.DabengOrgChartJS_2_0_6 + '/js/jquery.min.js',
+                        $Resource.DabengOrgChartJS_2_0_6 + '/js/html2canvas.min.js',
+                        $Resource.DabengOrgChartJS_2_0_6 + '/js/jquery.orgchart.js',
+                        $Resource.DabengOrgChartJS_2_0_6 + '/js/jquery-ui.js')}"
+                  afterScriptsLoaded="{!c.createMap}"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+   
+    <!--event:register and handlers -->
+    <aura:handler name="oSelectedContactEvent" event="c:SelectedContactEvent" action="{!c.selectedContactEvent}"/>
+    <!-- variables used to load page properly -->
+    <aura:attribute name="isInitialized" type="Boolean" default="false"/>
+    <aura:attribute name="isScriptLoaded" type="Boolean" default="false"/>
+    <aura:attribute name="openContactModal" type="Boolean" default="false"/>
+    <aura:attribute name="isOpportunityObject" type="Boolean" default="false"/>
+    <aura:attribute name="showPlusButton" type="Boolean" default="false"/>
+    <aura:attribute name="selectedTabId" type="String" default="existingContactTab"/>
+    <aura:attribute name="mapSpinnerClass" type="String" default=""/>
+
+    <!-- metaData/Data variables, used to pass/process data for each contact node -->
+    <aura:attribute name="nodeData" type="InfluenceMapController.InfluenceMapData"/>
+    <aura:attribute name="metaData" type="InfluenceMapController.InfluenceMapMetaData"/>
+    <aura:attribute name="contactList" type="List" default="[]" description="Used to remove contacts in the Lookup thata re already added in the map"/>
+    <!-- contact variable used in "New Contact Tab" -->
+    <aura:attribute name="contact" type="Contact" default="{}"/>
+
+    <!-- variables relevant to Add/Edit Modal -->
+    <!-- clearedContactId is used when a user erases a prepopulated contact in Contact Modal, but then closes Cancel button without saving changes  -->
+    <aura:attribute name="clearedContactId" type="String" default=""/>
+    <aura:attribute name="filterValue" type="String" default="1"/>
+    <aura:attribute name="eventName" type="String" default=""/>
+    <aura:attribute name="modalSpinnerClass" type="String" default="slds-hide"/>
+
+    <!-- Delete modal variables -->
+    <aura:attribute name="showDeleteModal" type="Boolean" default="false"/>
+    <aura:attribute name="deleteModalMessage" type="String" default=""/>
+
+    <!-- FetchFromAccount Modal variables -->
+    <aura:attribute name="showFetchFromAccountModal" type="Boolean" default="false"/>
+
+    <!-- attribute and style tag to override Salesforce navbar styling on opening Modal -->
+    <aura:attribute name="cssStyle" type="String" />
+    <style>{!v.cssStyle}</style>
+    <!-- Spinner on the page -->
+    <lightning:spinner aura:id="mapSpinner" class="{!v.mapSpinnerClass}" alternativeText="Refreshing Page"/>
+    <!-- componentDiv holds header, back & save button , export button is added dynamically by orgChart -->
+    <div id="componentDiv" aura:id="componentDiv">
+        <div class="backButtonDiv">
+            <button class="slds-button slds-button--neutral" aura:id="backButton" onclick="{!c.goBack}">Back</button>
+        </div>
+        <div class="headerText"><h2>{!v.metaData.strSObjectName}</h2></div>
+        <div class="headerButtons">
+            <div class="saveButtonDiv">
+                <!--<button class="slds-button slds-button- -success exportButton" onclick="{!c.exportMap}">Export</button>-->
+                <button class="slds-button slds-button--brand" onclick="{!c.saveMapData}">Save</button>
+            </div>
+        </div>
+    </div>
+    <!-- plusDiv div becomes visible when no values are present in the map -->
+    <aura:if isTrue="{!v.showPlusButton}">
+        <div id="plusDiv" aura:id="plusDiv">
+            <span onclick="{!c.addFirstNode}" title="Add new contact"><i class="fa fa-3x fa-plus-circle"></i></span>
+            <!-- show additional button if component is opened from Opportunity & no map data exists -->
+            <aura:if isTrue="{!v.isOpportunityObject}">
+                <br/>Or<br/><button class="slds-button slds-button--neutral" onclick="{!c.openFetchFromAccountModal}">Fetch from Account</button>
+            </aura:if>
+        </div>
+    </aura:if>
+    <!-- chart-Container holds the Influence Map that's dynamically created from front-end controller -->
+    <div id="chart-Container" class="chart-Container slds-text-align_center" aura:id="chart-Container" onclick="{!c.nodeClickAction}"></div>
+    <!-- toggleDiv enables the feature to show/hide Legend div -->
+    <div id="toggleDisplayDiv" onclick="{!c.toggleLegendDiv}">
+        <i class="fa fa-arrow-up"></i><span id="toggleLegendDivButton"> Legend</span>
+    </div>
+    
+    <!-- Legend Component -->
+    <div id="legendDiv" aura:id="legendDiv">
+        <div id="innerLegendDiv" class="slds-grid">
+            <div class="slds-size--3-of-12 slds-p-left--xx-small slds-p-right--xx-small">
+                <div class="legendRowHeaderDiv"><h4>Buying Role</h4></div>
+                <aura:iteration items="{!v.metaData.buyingRoleList}" var="buyingRole">
+                    <div class="pickListValuesDiv"><div class="pickListChar"><b>{!buyingRole.strChar}</b></div><span class="pickListColon">:</span><div class="pickListValue">{!buyingRole.strValue}</div></div>
+                </aura:iteration>
+            </div>
+            <div class="slds-size--3-of-12 slds-p-left--xx-small slds-p-right--xx-small">
+                <div class="legendRowHeaderDiv"><h4>Buyer Profile</h4></div>
+                <aura:iteration items="{!v.metaData.statusList}" var="status">
+                    <div class="pickListValuesDiv"><div class="pickListChar"><b>{!status.strChar}</b></div><span class="pickListColon">:</span><div class="pickListValue">{!status.strValue}</div></div>
+                </aura:iteration>
+            </div>
+            <div class="slds-size--3-of-12 slds-p-left--xx-small slds-p-right--xx-small">
+                <div class="legendRowHeaderDiv"><h4>Focus</h4></div>
+                <aura:iteration items="{!v.metaData.focusList}" var="focus">
+                    <div  class="pickListValuesDiv"><div class="pickListChar"><b>{!focus.strChar}</b></div><span class="pickListColon">:</span><div class="pickListValue">{!focus.strValue}</div></div>
+                </aura:iteration>
+            </div>
+            <div class="slds-size--3-of-12 slds-p-left--xx-small slds-p-right--xx-small">
+                <div class="legendRowHeaderDiv"><h4>Level of Contact</h4></div>
+                <aura:iteration items="{!v.metaData.contactLevelList}" var="level">
+                    <div  class="pickListValuesDiv">
+                        <div class="slds-progress-bar tooltip legendProgressBarDiv" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" role="progressbar">
+                            <span class="slds-progress-bar__value" style="{!'width:'+level.strApi}"></span>
+                        </div>
+                        <span class="pickListColon">&nbsp;:</span>
+                        <div class="progrssBarValue">{!level.strValue}</div>
+                    </div>
+                </aura:iteration>
+                <div class="pickListValuesDiv">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--/ End of Legend Component -->
+    <!-- Add/Edit Contact Modal  -->
+    <aura:if isTrue="{!v.openContactModal}">
+        <div role="dialog" aria-hidden="true" aura:id="addContactModal"  aria-labelledby="addContactModal" class="slds-modal slds-fade-in-open ">
+            <div class="slds-modal__container margin-top">
+                <!-- Modal Content -->
+                <div class="slds-modal__content slds-p-around--medium">
+                    <lightning:spinner aura:id="modalSpinner" class="{!v.modalSpinnerClass}" alternativeText="Inserting Contact"/>
+                    <!-- tabset starts here, holds two tabs as on 04-Jan-2018 -->
+                    <lightning:tabset selectedTabId="{!v.selectedTabId}">
+                        <lightning:tab id="existingContactTab" label="Add Existing Contact" onactive="{!c.setLookupField}">
+
+                            <form class="slds-form--stacked">
+                                <!--<ui:message aura:id="errorMessage" title="Error" severity="error" closable="true">{!v.errorMessage}</ui:message>-->
+                                <lightning:select name="intAccountFilter" label="Account Filter" required="true" value="{!v.nodeData.intAccountFilter}" onchange="{!c.changeFilter}">
+                                    <aura:iteration items="{!v.metaData.filterList}" var="filter">
+                                        <option value="{!filter.strApi}">{!filter.strValue}</option>
+                                    </aura:iteration>
+                                </lightning:select>
+                                <c:InfluenceMapLookupComponent aura:id="lookupComponent"
+                                    objectAPIName="contact"
+                                    iconName="standard:contact"
+                                    label="Contact Name"
+                                    selectedContact="{!v.nodeData.objContact}"
+                                    filterField="AccountId"
+                                    filterValue="{!v.nodeData.intAccountFilter}"
+                                    existingContactList="{!v.contactList}"
+                                    apexAccountId="{!v.metaData.parentAccountId}"
+                                    accountId="{!v.metaData.accountId}"
+                                    clearedContactId="{!v.clearedContactId}"/>
+                                <lightning:input type="text" label="Account Name" value="{!v.nodeData.objContact.Account_Name__c}" disabled="true"/>
+                                <lightning:select name="buyingRole" label="Buying Role" required="true" value="{!v.nodeData.objInfluenceMap.Buying_Role__c}">
+                                    <option value="">--None--</option>
+                                    <aura:iteration items="{!v.metaData.buyingRoleList}" var="buyingRole">
+                                        <option value="{!buyingRole.strApi}" text="{!buyingRole.strValue}"></option>
+                                    </aura:iteration>
+                                </lightning:select>
+                                <lightning:select name="status" label="Buyer Profile" required="true" value="{!v.nodeData.objInfluenceMap.Status__c}">
+                                    <option value="">-- None --</option>
+                                    <aura:iteration items="{!v.metaData.statusList}" var="status">
+                                        <option value="{!status.strApi}" text="{!status.strValue}"></option>
+                                    </aura:iteration>
+                                </lightning:select>
+                                <lightning:select name="focus" label="Focus" required="true" value="{!v.nodeData.objInfluenceMap.Focus__c}">
+                                    <option value="">-- None --</option>
+                                    <aura:iteration items="{!v.metaData.focusList}" var="focus">
+                                        <option value="{!focus.strApi}" text="{!focus.strValue}"></option>
+                                    </aura:iteration>
+                                </lightning:select>
+                                <lightning:select name="levelOfContact" label="Level of Interaction" required="true" value="{!v.nodeData.objInfluenceMap.Level_of_Contact__c}">
+                                    <option value="">-- None --</option>
+                                    <aura:iteration items="{!v.metaData.contactLevelList}" var="level">
+                                        <option value="{!level.strValue}" text="{!level.strValue}"></option>
+                                    </aura:iteration>
+                                </lightning:select>
+
+                            </form>
+                        </lightning:tab>
+                        <!-- New Contact Tab - will be visible only when user clicks on "Add" & has Write access on Contact -->
+                        <aura:if isTrue="{!v.metaData.hasAccountEditAccess}">
+                            <lightning:tab id="newContactTab" label="Add New Contact" onactive="{!c.onNewContactTabActive}">
+                                <form class="slds-form--stacked">
+                                    <!--<ui:message aura:id="errorMessage" title="Error" severity="error" closable="true">{!v.errorMessage}</ui:message>-->
+                                    <lightning:input type="text" label="First Name" value="{!v.contact.FirstName}" required="true"/>
+                                    <lightning:input type="text" label="Last Name" value="{!v.contact.LastName}" required="true"/>
+                                    <!--<lightning:input type="text" label="Company" value="{!v.contact.AccountId}" required="true"/>-->
+                                    <lightning:input type="text" label="Title" value="{!v.contact.Title}" required="true"/>
+                                    <lightning:input type="email" label="Email" value="{!v.contact.Email}" required="true"/>
+                                    <lightning:input type="tel" label="Phone" value="{!v.contact.Phone}" required="true"/>
+                                    <lightning:input type="text" label="State" value="{!v.contact.MailingState}" required="true"/>
+                                    <lightning:select label="Country" value="{!v.contact.MailingCountry}" required="true">
+                                        <option value="" text="-- None --"/>
+                                        <aura:iteration items="{!v.metaData.countryList}" var="country">
+                                            <option value="{!country}" text="{!country}"/>
+                                        </aura:iteration>
+                                    </lightning:select>
+                                    <lightning:input type="text" label="Zip Code" value="{!v.contact.MailingPostalCode}" required="true"/>
+                                </form>
+                            </lightning:tab>
+                        </aura:if>
+                    </lightning:tabset>
+                    <!-- tabset ends here -->
+                </div>
+                <!-- Modal Footer -->
+                <div class="slds-modal__footer">
+                    <button class="slds-button slds-button--neutral cancelButton" onclick="{!c.closeContactModal}" >Cancel</button>
+                   <button aura:id="saveButton" class="slds-button slds-button--brand saveButton" onclick="{!c.modalSave}">Save</button>
+                </div>
+            </div>
+        </div>
+        <div aura:id="addContactModalBackdrop" class="slds-backdrop slds-backdrop--open"></div>
+        <!-- end of Add/Edit Contact Modal -->
+
+
+    </aura:if>
+    <!-- Delete Node confirmation modal -->
+    <aura:if isTrue="{!v.showDeleteModal}">
+        <div role="dialog" aria-hidden="true" aura:id="deleteContactModal"  aria-labelledby="deleteContactModal" class="slds-modal slds-fade-in-open ">
+
+            <div class="slds-modal__container margin-top">
+                <div class="slds-modal__header">
+                    <button class="slds-button slds-modal__close slds-button--icon-inverse cancelButton" title="Close" onclick="{!c.closeDeleteModal}">
+                        X
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                    <h2 id="deleteModalHeader" class="slds-text-heading--medium">Warning</h2>
+                </div>
+                <!-- Modal Content -->
+                <div class="slds-modal__content slds-p-around--medium">
+                    <h4>{!v.deleteModalMessage}</h4>
+                </div>
+                <!-- Modal Footer -->
+                <div class="slds-modal__footer">
+                    <button class="slds-button slds-button--neutral cancelButton" onclick="{!c.closeDeleteModal}" >Cancel</button>
+                    <button aura:id="saveButton" class="slds-button slds-button--brand confirmButton" onclick="{!c.deleteContact}">Confirm</button>
+                </div>
+            </div>
+        </div>
+        <div aura:id="deleteContactModalBackdrop" class="slds-backdrop slds-backdrop--open"></div>
+        <!-- end of addContactModal -->
+    </aura:if>
+    <aura:if isTrue="{!v.showFetchFromAccountModal}">
+        <div role="dialog" aria-hidden="true" aura:id="fetchFromAccountModal"  aria-labelledby="fetchFromAccountModal" class="slds-modal slds-fade-in-open ">
+             <lightning:spinner aura:id="modalSpinner" class="{!v.modalSpinnerClass}" alternativeText="Inserting Contact"/>
+            <div class="slds-modal__container margin-top">
+                <div class="slds-modal__header">
+                    <button class="slds-button slds-modal__close slds-button--icon-inverse cancelButton" title="Close" onclick="{!c.closeFetchFromAccountModal}">
+                        X
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                    <h2 class="slds-text-heading--medium">Fetch Data From Account</h2>
+                </div>
+                <!-- Modal Content -->
+                <div class="slds-modal__content slds-p-around--medium">
+                    <div class="slds-grid">
+                        <div class="slds-size--3-of-12 slds-p-left--xx-small slds-p-right--xx-small">
+                            <div class="multiPickListHeaderDiv">
+                                <h4>Buying Role</h4>
+                            </div>
+                            <div class="multiPickListDiv">
+                                <ui:inputSelect aura:id="buyingRoleMutliPickList" multiple="true" change="{!c.onChangeBuyingRoleValues}">
+                                    <ui:inputSelectOption label="All" text="All"  value="true"/>
+                                    <aura:iteration items="{!v.metaData.buyingRoleList}" var="buyingRole">
+                                        <ui:inputSelectOption label="{!buyingRole.strValue}" text="{!buyingRole.strApi}"/>
+                                    </aura:iteration>
+                                </ui:inputSelect>
+                            </div>
+                        </div>
+                        <div class="slds-size--3-of-12 slds-p-left--xx-small slds-p-right--xx-small">
+                            <div class="multiPickListHeaderDiv">
+                                <h4>Buyer Profile</h4>
+                            </div>
+                            <div class="multiPickListDiv">
+                                <ui:inputSelect aura:id="statusMutliPickList" multiple="true" change="{!c.onChangeStatusValues}">
+                                    <ui:inputSelectOption label="All" text="All"  value="true"/>
+                                    <aura:iteration items="{!v.metaData.statusList}" var="status">
+                                        <ui:inputSelectOption label="{!status.strValue}" text="{!status.strApi}"/>
+                                    </aura:iteration>
+                                </ui:inputSelect>
+                            </div>
+                        </div>
+                        <div class="slds-size--3-of-12 slds-p-left--xx-small slds-p-right--xx-small">
+                            <div class="multiPickListHeaderDiv">
+                                <h4>Focus</h4>
+                            </div>
+                            <div class="multiPickListDiv">
+                                <ui:inputSelect aura:id="focusMutliPickList" multiple="true" change="{!c.onChangeFocusValues}">
+                                    <ui:inputSelectOption label="All" text="All" value="true"/>
+                                    <aura:iteration items="{!v.metaData.focusList}" var="focus">
+                                        <ui:inputSelectOption label="{!focus.strValue}" text="{!focus.strApi}"/>
+                                    </aura:iteration>
+                                </ui:inputSelect>
+                            </div>
+                        </div>
+                        <div class="slds-size--3-of-12 slds-p-left--xx-small slds-p-right--xx-small">
+                            <div class="multiPickListHeaderDiv">
+                                <h4>Contact Level</h4>
+                            </div>
+                            <div class="multiPickListDiv">
+                                <ui:inputSelect aura:id="contactLevelMutliPickList" multiple="true" change="{!c.onChangeContactLevelValues}">
+                                    <ui:inputSelectOption label="All" text="All" value="true"/>
+                                    <aura:iteration items="{!v.metaData.contactLevelList}" var="contactLevel">
+                                        <ui:inputSelectOption label="{!contactLevel.strValue}" text="{!contactLevel.strValue}"/>
+                                    </aura:iteration>
+                                </ui:inputSelect>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Modal Footer -->
+                <div class="slds-modal__footer">
+                    <button class="slds-button slds-button--neutral cancelButton" onclick="{!c.closeFetchFromAccountModal}" >Cancel</button>
+                   <button aura:id="saveButton" class="slds-button slds-button--brand saveButton" onclick="{!c.fetchFromAccount}">Save</button>
+                </div>
+            </div>
+        </div>
+        <div aura:id="fetchFromAccountModalBackdrop" class="slds-backdrop slds-backdrop--open"></div>
+        <!-- end of Add/Edit Contact Modal -->
+
+
+    </aura:if>
+</aura:component>

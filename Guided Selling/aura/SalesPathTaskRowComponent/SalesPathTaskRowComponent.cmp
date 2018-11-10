@@ -1,0 +1,45 @@
+<aura:component >
+    <aura:attribute name="objout" type="object"  />
+    <aura:attribute access="PUBLIC" name="index" type="Integer" /> 
+    <aura:registerEvent name="oSelectedTaskEvent" type="c:SalesPathTaskRowEvent"/>    
+    
+	 <lightning:card class="{!'ltgcard taskcard'+ v.index}" >
+         <div style="width:100%">
+            
+             <aura:renderIf isTrue="{!v.objout.tcoBattleCard!=null}">
+				<div style="float:left;margin-left:10px">
+                 <lightning:icon iconName="action:remove_relationship" class="" variant="inverse" size="small"/>
+                 <!--action:new_task is for Task, remove_relationship  for TCO and web_link  for Deal Doctor -->
+                 Deal Doctor - {!v.objout.tcoBattleCard}
+             </div>
+                 <aura:set attribute="else">
+                 	<div style="float:left;margin-left:10px">
+                 <lightning:icon iconName="action:new_task" class="" variant="inverse" size="small"/>
+                 <!--action:new_task is for Task, remove_relationship  for TCO and web_link  for Deal Doctor -->
+                 Task
+             </div>
+                 </aura:set>
+             </aura:renderIf>
+             
+             <div style="float:right;margin-right:20px">
+                
+                 <aura:renderIf isTrue="{!v.objout.tcoBattleCard == null}" >
+                     <lightning:button label="Add" onclick="{!c.fireTaskEvent}" />
+                 </aura:renderIf>
+                 <aura:renderIf isTrue="{!v.objout.tcoBattleCard!=null}">
+                     
+                     <lightning:button label="Claim" onclick="{!c.gotoURL}"/>
+                     
+                     
+                 </aura:renderIf>
+             </div>
+         </div>
+         <br></br>  
+         <div style="margin-top: 22px;text-align: left;margin-left: 42px;">
+             <p class="slds-p-horizontal--small"> 
+                 {!v.objout.recommandedTask}
+             </p>
+         </div>
+         
+    </lightning:card>
+</aura:component>

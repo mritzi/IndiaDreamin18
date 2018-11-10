@@ -1,0 +1,380 @@
+<aura:component implements="flexipage:availableForAllPageTypes,force:hasRecordId,flexipage:availableForRecordHome" controller="SalesPathController" access="global" >
+	<aura:attribute name="wrappermap" type="Map"  />
+	<aura:attribute name="SalespathWrapper" type="SalesPathController.SalesPathDataWrapper[]"  />
+	<aura:attribute name="SalespathWrapperNew" type="SalesPathController.SalesPathWrapper"  />
+	<aura:attribute name="lstStage" type="String[]"  />
+	<aura:attribute name="lstKeyWrapper" type="SalesPathController.SalesPathKeyfieldWrapper[]"  />
+	<aura:attribute name="OutcomeWrapper" type="SalesPathController.SalesPathOutcomeWrapper[]"  />
+	<aura:attribute name="SalestipWrapper" type="SalesPathController.SalesTipWrapper[]"  />
+	<aura:attribute name="TaskWrapper" type="SalesPathController.SalesPathTaskWrapper[]"  />
+	<aura:attribute name="dealdocTaskWrapper" type="SalesPathController.SalesPathTaskWrapper[]"  />
+	<aura:attribute name="recordId" type="String" />
+	<aura:attribute name="activeStage" type="String" />
+	<aura:attribute name="index" type="integer" />
+	<aura:attribute name="selectedstage" type="String" />
+	<aura:attribute name="showclose" type="Boolean" />
+	<aura:attribute name="showmark" type="Boolean" />
+	<aura:attribute name="Messageshow" type="boolean" />
+	<aura:attribute name="Messageshownot" type="boolean" />
+	<aura:attribute name="errormessage" type="string" />
+	<aura:attribute name="errormodal" type="Boolean" />
+	<aura:attribute name="doInitCall" type="Boolean" default="false" />
+	<aura:attribute name="selectoptionValue" type="string" default="" />
+	
+	<aura:attribute name="fieldset" type="String" description="Fieldset Api Name"/>
+	<!-- Below are the attributes populated from Controller for Edit Feature -->
+	<aura:attribute name="detailRecord" type="Opportunity" description="The detail record to display values"/>
+	<aura:attribute name="recordJson" type="string" description="Record value in json"/>
+	<aura:attribute name="wrapperobj" type="SalesPathController.SalesPathEditWrapper" description="mainwrapperobj"  />
+	<aura:attribute name="EditwrapperList" type="SalesPathController.DynamicFieldWrapper[]" description="List of PANW_EditWrapper wrapperobjects"/>
+	<aura:attribute name="selectedLookUpRecord" type="sObject" default="{}"/>
+	<aura:attribute name="simpleRecord" type="Opportunity" />
+	<aura:attribute name="Opportunity" type="Opportunity"  default="{ 'sobjectType': 'Opportunity' }"/>
+
+	<!-- Handlers-->
+	<aura:handler name="oSelectedRecordEvent" event="c:selectedsObjectRecordEvent" action="{!c.handleComponentEvent}"/>
+	<aura:handler name="oSelectedTaskEvent" event="c:SalesPathTaskRowEvent" action="{!c.saveTask}" />
+	<aura:handler name="oSelectedTaskEventDealDoc" event="c:SalesPathTaskRowEvent" action="{!c.saveTaskDealDoc}" />
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+	<aura:handler event="force:refreshView" action="{!c.doInit}" />
+
+
+	<div id="topDiv" class="pa-drawer pa-border no-data runtime_sales_pathassistantCollapsibleDrawer slds-path-coach slds-m-bottom--large slds-m-top--large">
+		<div class="slds-grid cd-header header">
+			<div class="toggleButtonWrapper"  style="padding-left:2px">
+				<button class="slds-button slds-button--neutral is-selected slds-is-selected pa-drawer-toggle toggleButton uiButton--stateful uiButton"  type="button" title="Show Less" style=" border-radius:50%;height: 32px;width: 32px;color: rgb(0, 112, 210);border-color: cadetblue;" onclick="{!c.sectionOne}">
+					<span class="assistiveText" >Show Less</span>
+					<span class="slds-icon_container slds-icon-utility-switch cd-arrow slds-button__icon forceIcon" style="border-radius: .25rem;margin-left: -7px;"  >
+						<span  >
+							<lightning:icon class="slds-hide" aura:id="articleOne" iconName="utility:switch" size="x-small" alternativeText="Indicates add" />
+							<lightning:icon class="slds-show" aura:id="articleOne" iconName="utility:chevronright" size="x-small" alternativeText="Indicates dash" />
+						</span>
+					</span>
+				</button>
+			</div>
+			<div class="slds-tabs_path slds-m-left--medium" role="application" >
+				<ul class="slds-tabs_path__nav" role="listbox" aria-orientation="horizontal" aura:id="pathsection" >
+					<aura:iteration items="{!v.SalespathWrapper}" var="objsales">
+						<li class="{!if(objsales.completed,if(objsales.completeGatedTask,'slds-is-complete slds-tabs_path__item','ft-outcomes slds-is-complete slds-tabs_path__item'),if(objsales.incomplete,'slds-tabs_path__item slds-is-incomplete',if(objsales.current,'slds-tabs_path__item slds-is-current','slds-is-complete slds-tabs_path__item')))}"   role="presentation" id="{!globalId +objsales.stage}"   onclick="{!c.selectstage}">
+                            <a aria-selected="false" class="slds-tabs_path__link" href="javascript:void(0);" id="{!globalId +objsales.stage}" role="option" tabindex="-1" >
+                                <span class="slds-tabs_path__stage" id="{!globalId +objsales.stage}" >
+                                    <aura:renderIf isTrue="{!objsales.completed}">
+                                        <aura:renderIf isTrue="{!objsales.completeGatedTask}">
+                                            <span class="slds-icon_container slds-icon-utility-check checkmark">
+                                                <lightning:icon class="slds-show"  iconName="utility:check" size="x-small" alternativeText="Indicates add"/>
+                                            </span>
+                                            <aura:set attribute="else">
+                                                <span class="slds-icon_container slds-icon-utility-warning warningmark">
+                                                    <lightning:icon class="slds-show"  iconName="utility:warning" size="x-small" alternativeText="Indicates add"/>
+                                                </span>
+                                            </aura:set>
+                                        </aura:renderIf>
+                                    </aura:renderIf>
+                                    <span class="slds-assistive-text">{!objsales.stage}</span>
+                                </span>
+                                <span class="slds-tabs_path__title" >{!objsales.stage}</span>
+                            </a>
+                        </li>
+					</aura:iteration>
+				</ul>
+			</div>
+            <!-- added button width class to make the size of the two buttons same, 15/March/2018, Rizwan -->
+			<aura:renderIf isTrue="{!v.showclose}">
+				<lightning:button class="slds-button slds-button_brand slds-is-active slds-path__mark-complete slds-no-flex slds-m-horizontal_small buttonstyle buttonWidth"   onclick="{!c.chooseclosestage}">
+					Select Closed Stage
+				</lightning:button>
+			</aura:renderIf>
+			<aura:renderIf isTrue="{!v.showmark}">
+				<lightning:button class="slds-button slds-button_brand slds-path__mark-complete slds-no-flex slds-m-horizontal_small buttonWidth" onclick="{!c.markOppstage}">
+					Mark as Current Stage
+				</lightning:button>
+			</aura:renderIf>
+		</div>
+		<div class="slds-progress slds-m-top--medium slds-grid">
+			<aura:iteration items="{!v.SalespathWrapper}" var="objsales">
+				<div class="slds-col">
+					<ol class="slds-progress__list">
+						<li class="slds-progress__item slds-is-active">
+							<button class="slds-button slds-progress__marker ft-progress__marker" style="box-shadow: rgb(21, 137, 238) 0 0 0 0px;"></button>
+						</li>
+					</ol>
+					<div class="slds-progress-bar slds-progress-bar_x-small" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{!objsales.progressvalue}" role="progressbar">
+						<span class="slds-progress-bar__value" style="{! ' width: ' + objsales.progressValue + '%' + ';'}">
+						<span class="slds-assistive-text">Progress: {!objsales.progressValue}%</span>
+						</span>
+					</div>
+				</div>
+				                 
+			</aura:iteration>
+            <!-- this button added as a requirement SFDCSALES-1776
+				initially its hidden, when data is retrieved from backend, slds-hide class is removed in helper
+			-->
+            <button aura:id="lastProgressButton" id="lastProgressButton" class="slds-hide slds-button slds-progress__marker ft-progress__marker"></button>
+			{!v.SalespathWrapper.progressValue}
+		</div>
+	</div>
+	<div class="demo-only slds-hide " aura:id="closemodalsection" style="height: 640px;">
+		<section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+			<div class="slds-modal__container">
+				<header class="slds-modal__header">
+					<button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" onclick="{!c.closemodal}" title="Close">
+						<lightning:icon aura:id="closebutton" iconName="utility:close" size="x-small" alternativeText="Indicates add" />
+						<span class="slds-assistive-text">Close</span>
+					</button>
+					<h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Close This Opportunity </h2>
+				</header>
+				<div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+					<div class="slds-form-element slds-col--padded slds-size--1-of-1 slds ">
+						<label class="slds-form-element__label" for="select-01">Stage*</label>
+						<div class="slds-form-element__control">
+							<div class="slds-select_container">
+								<ui:inputSelect aura:id="closedLevels"  class="slds-select" multiple="false" change="{!c.onSelectChange}">
+									<ui:inputSelectOption text="" label="--None--" value="true" />
+									<ui:inputSelectOption text="10 - Closed - Won" label="10 - Closed - Won" />
+									<ui:inputSelectOption text="0 - Closed Lost" label="0 - Closed Lost"/>
+									<ui:inputSelectOption text="0 - Closed No Decision" label="0 - Closed No Decision"/>
+								</ui:inputSelect>
+							</div>
+						</div>
+					</div>
+				</div>
+				<footer class="slds-modal__footer">
+					<button class="slds-button slds-button_neutral" onclick="{!c.closemodal}">Cancel</button>
+				</footer>
+			</div>
+		</section>
+		<div class="slds-backdrop slds-backdrop_open"></div>
+	</div>
+	<div class="slds-hide" aura:id= "errormodal">
+		<div role="alertdialog" tabindex="-1"  aria-labelledby="prompt-heading-id" aria-describedby="prompt-message-wrapper" class="slds-modal slds-fade-in-open slds-modal--prompt">
+			<div class="slds-modal__container">
+				<div class="slds-modal__header slds-theme--error slds-theme--alert-texture">
+					<button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" onclick="{!c.closeErrormodal}" title="Close">
+						<lightning:icon aura:id="closebutton" iconName="utility:close" size="x-small" alternativeText="Indicates add" />						<span class="slds-assistive-text">Close</span>
+					</button>
+					<h2 class="slds-text-heading--medium" id="prompt-heading-id">Alert Message</h2>
+				</div>
+				<div class="slds-modal__content slds-p-around--medium">
+					<div>
+						<p>{!v.errormessage}</p>
+					</div>
+				</div>
+				<div class="slds-modal__footer slds-theme--default">
+					<button class="slds-button slds-button--neutral" onclick="{!c.closeErrormodal}">Close</button>
+				</div>
+			</div>
+		</div>
+		<div class="slds-backdrop slds-backdrop--open"></div>
+	</div>
+	<div class="slds-modal  " tabindex="-1" role="dialog" aura:id="Modalbox" style=" height: 31rem;margin-top: 10rem;width:86rem; ">
+		<div class="slds-modal__container "  style="    background-color: white;">
+			<div class="modal-header slds-modal__header">
+				<h2 id="header43" class="slds-text-heading--medium">Edit Key Fields</h2>
+			</div>
+			<div class="modal-body slds-scrollable--y slds-modal__content slds-p-around--medium ">
+				<div class="slds-col--padded slds-size--1-of-1 slds  " aura:id="editPanel">
+					{!v.body}
+				</div>
+				<div class="slds-hide">
+					<c:CustomLookupComponent objectAPIName="account" IconName="standard:account"  selectedRecord="{!v.selectedLookUpRecord}" label="Account Name"/>
+				</div>
+			</div>
+			<div class=" slds-modal__footer slds-m-bottom--medium">
+				<div class=" slds-align_absolute-center" >
+					<lightning:button variant="brand"  label="Submit" onclick="{! c.saveOpportunityData }" />
+					<lightning:button variant="destructive" class="slds-m-left--medium" label="Cancel" onclick="{!c.closeEditModal}" />
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="slds-backdrop" aura:id="Modalbackdrop"></div>
+    <lightning:spinner variant="brand"  class="slds-hide" aura:id="mySpinner" size="large"/>
+	<div aura:id="overlay" class="Overlay " >
+		<div class="slds-hide slds-m-bottom--large " aura:id="sectiondetails" onHover="{!c.displayoverlay}">
+			<div class="slds-align_absolute-center">
+				<aura:renderIf isTrue="{!v.Messageshownot}">
+					<lightning:button class="slds-button slds-button_brand slds-path__mark-complete slds-no-flex slds-m-horizontal_small" onclick="{!c.markNewstage}">
+						Ready To Move Next Stage
+					</lightning:button>
+				</aura:renderIf>
+				<aura:renderIf isTrue="{!v.Messageshow}">
+					<div class="slds-box slds-theme--warning">
+						<p><strong>
+							Please complete the key fields</strong>
+						</p>
+					</div>
+				</aura:renderIf>
+			</div>
+			<div class="slds-grid slds-grid--pull-padded" style="margin-left: 0px;margin-right: 9px" >
+				<div class="slds-size_1-of-3" style="margin-right:5px;">
+					<article class="slds-card slds-scrollable--y" style = "background-color: rgb(253, 253, 253)">
+						<h3 class="slds-section__title  test-id__section-header-container" >
+							<button class="slds-button test-id__section-header-button slds-section__title-action" type="button"  aria-expanded="true">
+								<span class="slds-icon_container slds-icon-utility-chevrondown test-id__section-header-icon section-icon slds-m-right_x-small slds-button__icon forceIcon" ></span>
+								<span class="test-id__section-header-title slds-truncate" data-aura-rendered-by="2926:0">Key Fields</span>
+								<span class="slds-float_right">
+									<aura:renderIf isTrue="{!and(v.activeStage == v.selectedstage,v.lstKeyWrapper.length>0)}">
+							<button  class="slds-button" style="margin-left: 16rem;height: 30px;width: 50px;" label="Edit" onclick="{!c.openEditmodal}">Edit</button></aura:renderIf></span></button>
+						</h3>
+						<div class="slds-scrollable--y  slds-m-bottom--medium" style="height:210px">
+							<div class="slds-form ">
+								<div class=" slds-grid slds-wrap" aura:id="keyfieldsection" style="margin-top: 1rem;">
+									<aura:renderIf isTrue="{!and(v.lstKeyWrapper != null ,v.lstKeyWrapper.length>0)}">
+										<aura:iteration items="{!v.lstKeyWrapper}" var="obj">
+											<div class="slds-size_1-of-2">
+												<div class="slds-grid full forcePageBlockSectionRow">
+													<div class="slds-has-flexi-truncate slds-has-divider_top slds-p-horizontal_x-small full noTopBottomBorders forcePageBlockItem forcePageBlockItemView">
+														<div class="slds-form-element slds-form-element_edit slds-grow slds-hint-parent slds-p-vertical_xx-small override--slds-form-element">
+															<div class="test-id__field-label-container">
+																<aura:renderIf isTrue="{!obj.fieldValue!=null}">
+																	<span  class="test-id__field-label slds-form-element__label">
+																	{!obj.fieldLabel}
+																	</span>
+																</aura:renderIf>
+																<aura:renderIf isTrue="{!obj.fieldValue==null}">
+																	<span  class="test-id__field-label slds-form-element__label">
+																	{!obj.fieldLabel}
+																	</span>
+																</aura:renderIf>
+															</div>
+															<div class="slds-form-element__control slds-grid itemBody">
+																<span class="test-id__field-value slds-form-element__static slds-grow" style="color: rgb(0, 112, 210);font-weight:bold">
+																{!obj.fieldValue}
+																</span>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</aura:iteration>
+									</aura:renderIf>
+								</div>
+								<aura:renderIf isTrue="{!or(v.lstKeyWrapper == null ,v.lstKeyWrapper.length==0)}">
+									<div class="slds-theme_default slds-align_absolute-center slds-m-top--large" style="margin-top:100px">
+										<p><strong>No recommended Key Fields for the Stage </strong></p>
+									</div>
+								</aura:renderIf>
+							</div>
+						</div>
+					</article>
+					<article class="slds-card slds-m-top--large" style="margin-top: 1rem;">
+						<h3 class="slds-section__title  test-id__section-header-container" >
+                            <button class="slds-button test-id__section-header-button slds-section__title-action" type="button"  aria-expanded="true">
+                                <span aura:id="mainheader" class="slds-icon_container slds-icon-utility-chevrondown test-id__section-header-icon section-icon slds-m-right_x-small slds-button__icon forceIcon" style="font-size: 20px;" ></span>
+                                <span class="test-id__section-header-title slds-truncate" data-aura-rendered-by="2926:0">Sales Tips &amp; Resources</span>
+                            </button>
+                        </h3>
+						<div class="slds-scrollable--y slds-m-top--medium" style="height:150px; width=80%;">
+							<div class="slds-p-left--small" role="application">
+								<aura:renderIf isTrue="{!or(v.SalestipWrapper != null ,v.SalestipWrapper.length>0)}">
+                                    <ul class="slds-has-dividers_bottom-space" role="tree">
+                                        <aura:iteration items="{!v.SalestipWrapper}" var="objout">
+                                            <li class="slds-item" role="treeitem">
+												<lightning:formattedRichText value="{!objout.salesTip}" />
+                                                <!--aura:unescapedHtml  value="{!objout.salesTip}" /-->
+                                            </li>
+
+                                        </aura:iteration>
+                                    </ul>
+								</aura:renderIf>
+								<aura:renderIf isTrue="{!or(v.SalestipWrapper == null ,v.SalestipWrapper.length==0)}">
+									<div class="slds-grid slds-wrap">
+										<div class="slds-theme_default slds-align_absolute-center " style="margin-top: 1rem;margin-right: 2rem;">
+											<p><strong>No active recomendated Sales Tips for the Stage </strong></p>
+										</div>
+									</div>
+								</aura:renderIf>
+							</div>
+						</div>
+					</article>
+				</div>
+				<div class="slds-size_1-of-3" style="margin-right:5px;">
+					<article class="slds-card"  style = "background-color: rgb(253, 253, 253);border:none">
+						<article class="slds-card "   style="    height: 30rem;">
+							<h3 class="slds-section__title  test-id__section-header-container" >
+								<button class="slds-button test-id__section-header-button slds-section__title-action" type="button"  aria-expanded="true">
+									<span aura:id="mainheader" class="slds-icon_container slds-icon-utility-chevrondown test-id__section-header-icon section-icon slds-m-right_x-small slds-button__icon forceIcon" style="font-size: 20px;" ></span>
+									<span class="test-id__section-header-title slds-truncate" data-aura-rendered-by="2926:0">Outcomes</span>
+								</button>
+							</h3>
+							<div class="slds-scrollable--y " style="    height: 26.5rem;">
+								<aura:renderIf isTrue="{!or(v.OutcomeWrapper != null ,v.OutcomeWrapper.length>0)}">
+									<fieldset>
+										<ul>
+											<aura:iteration items="{!v.OutcomeWrapper}" var="objout">
+												<div class="slds-form-element__control slds-m-top--small  slds-m-left--x-small">
+													<li class="hightliteText">
+														
+														<label class="checkbox">
+															<div class="slds-grid  slds-gutters " >
+																<div class="slds-col slds-size_1-of-12">
+																	<ui:inputCheckbox value="{!objout.completed}" text="{!objout.transactionId}" class="hide-box" click="{!c.savecheckbox}"/>
+																	<span class="{!if(objout.completed, 'checkbox__icon ','checkedbox__icon' ) }"  checked="{!objout.completed}" style="font-family:icons;"></span>
+																</div>
+																<div class="slds-col slds-size_11-of-12">
+																	<aura:renderIf isTrue="{!objout.isGatedTask}">
+																		<span style="font-weight: 900;color:Black">
+																		{!objout.taskDescription}
+																		</span>
+																		<aura:set attribute="else">
+																			<span>
+																			{!objout.taskDescription}
+																			</span>
+																		</aura:set>
+																	</aura:renderIf>
+																</div>
+															</div>
+														</label>
+													</li>
+												</div>
+											</aura:iteration>
+										</ul>
+									</fieldset>
+								</aura:renderIf>
+								<aura:renderIf isTrue="{!or(v.OutcomeWrapper == null ,v.OutcomeWrapper.length==0)}">
+									<div class=" slds-grid slds-wrap">
+										<div class="slds-theme_default slds-align_absolute-center slds-m-top--large" style="margin-top: 8.5rem;margin-right: 4.5rem;">
+											<p><strong>No Recommended Outcomes for the Stage </strong></p>
+										</div>
+									</div>
+								</aura:renderIf>
+							</div>
+						</article>
+					</article>
+				</div>
+				<div class="slds-size_1-of-3" style="margin-right:5px;">
+					<article class="slds-card recotask"  style = " background-color: rgb(253, 253, 253)" >
+						<h3 class="slds-section__title  test-id__section-header-container" >
+							<button class="slds-button test-id__section-header-button slds-section__title-action" type="button"  aria-expanded="true">
+							<span aura:id="mainheader" class="slds-icon_container slds-icon-utility-chevrondown test-id__section-header-icon section-icon slds-m-right_x-small slds-button__icon forceIcon" style="font-size: 20px;" ></span>
+							<span class="test-id__section-header-title slds-truncate" data-aura-rendered-by="2926:0">Recommended Activities</span>
+							</button>
+						</h3>
+						<div class="slds-scrollable--y slds-m-top--medium" style="height:26.7rem;">
+							<aura:renderIf isTrue="{!or(v.TaskWrapper != null ,v.TaskWrapper.length>0)}">
+								<fieldset id="RecoTaskList">
+									<aura:iteration items="{!v.dealdocTaskWrapper}" var="objout" indexVar="index">
+										<c:SalesPathTaskRowComponent objout="{!objout}" index="{!index}"/>
+									</aura:iteration>
+									<aura:iteration items="{!v.TaskWrapper}" var="objout" indexVar="index">
+										<c:SalesPathTaskRowComponent objout="{!objout}" index="{!index}"/>
+									</aura:iteration>
+								</fieldset>
+							</aura:renderIf>
+							<aura:renderIf isTrue="{!and(or(v.dealdocTaskWrapper == null ,v.dealdocTaskWrapper.length==0),or(v.TaskWrapper == null ,v.TaskWrapper.length==0))}">
+								<div class=" slds-grid slds-wrap">
+									<div class="slds-theme_default slds-align_absolute-center slds-m-top--large " style="padding-top: 12rem;
+										padding-bottom: 11rem;">
+										<p><strong>No active recommendation—go grab a coffee while there's still time
+											</strong>
+										</p>
+									</div>
+								</div>
+							</aura:renderIf>
+						</div>
+					</article>
+				</div>
+			</div>
+		</div>
+	</div>
+</aura:component>
