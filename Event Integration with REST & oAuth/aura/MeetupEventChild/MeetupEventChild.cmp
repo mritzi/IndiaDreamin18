@@ -1,0 +1,55 @@
+<!--
+    Component Name : MeetupEventChild
+    Description: Used to render one event from Meetup.com
+		reused in an iteration to display all meetup events on the page
+    Developed By: Mohammed Rizwan
+-->
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global" >
+	<aura:attribute name="meetup" type="MeetupWrappers.DisplayData"/>
+    <aura:registerEvent name="meetupRsvpEvent" type="c:MeetupRSVPEvent"/>
+    <div class="c-container">
+        <lightning:layout multipleRows="true">
+            <lightning:layoutItem padding="around-small" size="12">
+                <div class="page-section page-header">
+                    <h2 class="dateClass"><lightning:formattedDateTime value="{!v.meetup.eventDate}" year="numeric" month="short" day="2-digit" weekday="short"/></h2>
+                </div>
+            </lightning:layoutItem>
+            <lightning:layoutItem class="layoutItem" padding="around-small" size="12">
+                <lightning:layout>
+                    <lightning:layoutItem padding="around-small" size="2">
+                        <div class="page-section page-right">
+                            <h2><lightning:icon iconName="standard:event" alternativeText="Event" />
+                            </h2>
+                            <p>
+                                <lightning:formattedDateTime value="{!v.meetup.eventTime}" hour="2-digit" minute="2-digit" hour12="true"/>
+                            </p>
+                        </div>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem padding="around-small" size="8">
+                        <div class="page-section page-main">
+                            <h2 class="eventName">{!v.meetup.eventName}</h2>
+                            <p><b>Group: {!v.meetup.groupName}</b></p>
+                            <p class="address">Venue: {!v.meetup.venueName}, {!v.meetup.venueStreet}</p>
+                            <p class="address">{!v.meetup.venueCity}, {!v.meetup.venueCountry}</p>
+                            <p><i>Contacts Attending:</i></p>
+                            <aura:iteration items="{!v.meetup.attendeeList}" var="contact">
+                            	<span class="attendee">{!contact.Name}</span>&nbsp;
+                            </aura:iteration>
+                        </div>
+                    </lightning:layoutItem>
+                    <lightning:layoutItem padding="around-small" size="2">
+                        <div class="page-section page-right">
+							<span class="centerAlign">
+                            	<p><lightning:icon class="{!'attending'+ v.meetup.attendingEvent}" iconName="action:approval" size="small" alternativeText="Indicates Event Attendance" onclick="{!c.fireEvent}"/></p>
+                                <h2>
+                                    <a href="{!v.meetup.eventLink}" target="_blank"><lightning:icon class="detailIcon" iconName="utility:forward" alternativeText="Event Detail" /></a>
+                                </h2>
+                            </span>                            
+                        </div>
+                    </lightning:layoutItem>
+                </lightning:layout>
+            </lightning:layoutItem>
+        </lightning:layout>
+    </div>
+    <hr id="hr"/>
+</aura:component>

@@ -1,0 +1,5 @@
+<aura:event type="COMPONENT" description="Event template">
+    <aura:attribute name="eventId" type="String"/>
+    <aura:attribute name="groupUrlname" type="String"/>
+    <aura:attribute name="attendingEvent" type="Boolean"/>
+</aura:event>

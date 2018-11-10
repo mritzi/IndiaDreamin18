@@ -1,0 +1,42 @@
+.THIS .attendee{
+    background-color:lightgrey;
+    padding:0px 5px;
+    border-radius:5px;
+}
+.THIS#hr{
+    margin:0px;
+}
+.THIS .layoutItem{
+    padding-top:0px;
+}
+.THIS .dateClass{
+    font-weight:bold;
+} 
+.THIS .eventName{
+    font-size:16px;
+}
+.THIS .address{
+    font-size:14px;
+}
+.THIS .attendingtrue{background-color:green;}
+.THIS .attendingfalse{background-color:grey;}
+.THIS .attendingtrue:hover, .THIS .attendingfalse:hover{
+    cursor:pointer;
+    background-color:#00c6b7;
+}
+.THIS .detailIcon{
+    padding:3px;
+    border-radius:50%;
+    background-color:lightgrey;
+}
+.THIS .detailIcon .slds-icon-text-default{fill:white;}
+.THIS .detailIcon:hover{
+    /*background-color:#00c6b7;*/
+}
+.THIS .centerAlign{
+    text-align:center;
+}
+.THIS .centerAlign>h2{
+    margin-left:5px;
+    margin-top:5px;
+}

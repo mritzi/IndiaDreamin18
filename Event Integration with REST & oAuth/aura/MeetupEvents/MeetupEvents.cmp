@@ -1,0 +1,47 @@
+<!--
+    Component Name : MeetupEvents
+    Description: Used to show upcoming events from Meetup.com which companies Leads are attending,
+        so that Sales Agent can attend events,network with Leads/Contacts and pitch for Sales
+    Developed By: Mohammed Rizwan
+-->
+<aura:component Controller="MeetupEventController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global" >
+    <!-- vairables used in the component -->
+    <aura:attribute name="msg" type="String"/>
+    <aura:attribute name="showLogin" type="Boolean" default="false"/>
+    <aura:attribute name="showDisconnect" type="Boolean" default="false"/>
+    <aura:attribute name="showNoMeetup" type="Boolean" default="false"/>
+    <aura:attribute name="hideSpinnerClass" type="String" default=""/>
+    <aura:attribute name="meetupList" type="MeetupWrappers.DisplayData[]"/>
+    <!-- event and init handlers -->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:handler name="meetupRsvpEvent" event="c:MeetupRSVPEvent" action="{!c.changeRsvp}"/>
+
+    <lightning:spinner class="{!v.hideSpinnerClass}"/>
+    <lightning:card title="Events from your contacts">
+        <!-- show disconnect button when login is not require
+			 If Login button is displayed, then disconnnect will be hidden
+		-->
+        <aura:set attribute="actions">
+            <aura:if isTrue="{!v.showDisconnect}">
+            	<lightning:button label="Disconnect" onclick="{!c.logout}"/>
+            </aura:if>
+        </aura:set>
+        <!-- connect button visible either when user hasn't linked meetup account or tokens have expired/been revoked -->
+		<aura:if isTrue="{!v.showLogin}">
+        	<p class="slds-p-horizontal_medium">
+                <lightning:formattedText value="Connect with your Meetup account"/>&nbsp;
+                <lightning:button label="Connect" title="Connect action" onclick="{!c.beginOAuthFlow}"/>
+            </p>
+        </aura:if>
+        <!-- If there are no upcoming events which are being attended by contacts, show this message -->
+        <aura:if isTrue="{!v.showNoMeetup}">
+        	<p class="slds-p-horizontal_medium">
+                <lightning:formattedText value="You don't have any upcoming meetup with contacts"/>
+            </p>
+        </aura:if>
+		<!-- pass the values, to a child component to display data if request has succeeded -->
+        <aura:iteration items="{!v.meetupList}" var="meetup">
+            <c:MeetupEventChild meetup="{!meetup}"/>
+        </aura:iteration>
+    </lightning:card>
+</aura:component>
