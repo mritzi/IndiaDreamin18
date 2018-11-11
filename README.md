@@ -1,7 +1,7 @@
 # IndiaDreamin18
 Submission for Indian Dreamin'18 paper call for presentation
 
-##Titles
+## Titles
 + Connect the dots in Lightning with ‘Influence Map'.
 + Make Lightning more 'Eventful' using oAuth based Integration.
 + Sell Lightning fast with 'Guided Selling'.
